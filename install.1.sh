@@ -29,14 +29,12 @@ apt-get -y install \
     zlib1g-dev \
     nasm \
     yasm \
-    libx264-dev \
-    libx265-dev \
     libnuma-dev \
     libvpx-dev \
     libfdk-aac-dev \
     libmp3lame-dev \
-    libopus-dev \
-    libdav1d-dev
+    libopus-dev
+
 
 
 # Download FFMPEG source
@@ -57,6 +55,22 @@ chmod +x "$FFMPEG_PATCH_DIR"/patch.sh
 "$FFMPEG_PATCH_DIR"/patch.sh
 
 
+cd "$INSTALL_BASE_DIR"/ffmpeg_sources && \
+git -C x264 pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
+cd x264 && \
+PATH="$INSTALL_BASE_DIR/bin:$PATH" PKG_CONFIG_PATH="$INSTALL_BASE_DIR/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$INSTALL_BASE_DIR/ffmpeg_build" --bindir="$INSTALL_BASE_DIR/bin" --enable-static --enable-pic && \
+PATH="$INSTALL_BASE_DIR/bin:$PATH" make && \
+make install
+
+#cd "$INSTALL_BASE_DIR"/ffmpeg_sources && \
+#wget -O x265.tar.bz2 https://bitbucket.org/multicoreware/x265_git/get/master.tar.bz2 && \
+#tar xjvf x265.tar.bz2 && \
+#cd multicoreware*/build/linux && \
+#PATH="$INSTALL_BASE_DIR/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$INSTALL_BASE_DIR/ffmpeg_build" -DENABLE_SHARED=off ../../source && \
+#PATH="$INSTALL_BASE_DIR/bin:$PATH" make && \
+#make install
+
+
 # Compile FFMPEG
 cd "$INSTALL_BASE_DIR"/ffmpeg_sources/ffmpeg && \
 ./configure \
@@ -72,9 +86,7 @@ cd "$INSTALL_BASE_DIR"/ffmpeg_sources/ffmpeg && \
 --enable-libopus \
 --enable-libvpx \
 --enable-libx264 \
---enable-libx265 \
 --enable-nonfree \
---enable-libdav1d \
 --enable-pic && \
 make -j $(nproc) && \
 make install && \

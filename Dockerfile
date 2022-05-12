@@ -14,6 +14,8 @@ RUN mkdir -p /home/video_cap && \
   chmod +x install.sh && \
   ./install.sh
 
+COPY install.1.sh /home/video_cap
+
 RUN mkdir -p /home/video_cap && \
   cd /home/video_cap && \
   chmod +x install.1.sh && \
@@ -26,6 +28,9 @@ RUN apt-get update && \
   python3-dbg
 
 FROM ubuntu:20.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Bratislava
 
 # install Python
 RUN apt-get update && \
