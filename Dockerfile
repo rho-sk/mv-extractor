@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 AS builder
+FROM ubuntu:20.04 AS builder42
 
 WORKDIR /home/video_cap
 
@@ -64,15 +64,15 @@ RUN apt-get update && \
 
 # copy libraries
 WORKDIR /usr/local/lib
-COPY --from=builder /usr/local/lib .
+COPY --from=builder42 /usr/local/lib .
 WORKDIR /usr/local/include
-COPY --from=builder /home/ffmpeg_build/include .
+COPY --from=builder42 /home/ffmpeg_build/include .
 WORKDIR /home/ffmpeg_build/lib
-COPY --from=builder /home/ffmpeg_build/lib .
+COPY --from=builder42 /home/ffmpeg_build/lib .
 WORKDIR /usr/local/include/opencv4/
-COPY --from=builder /usr/local/include/opencv4/ .
+COPY --from=builder42 /usr/local/include/opencv4/ .
 WORKDIR /home/opencv/build/lib
-COPY --from=builder /home/opencv/build/lib .
+COPY --from=builder42 /home/opencv/build/lib .
 
 # Set environment variables
 ENV PATH="$PATH:/home/bin"
