@@ -1,9 +1,12 @@
-FROM ubuntu:18.04 AS builder
+FROM ubuntu:20.04 AS builder
 
 WORKDIR /home/video_cap
 
 COPY install.sh /home/video_cap
 COPY ffmpeg_patch /home/video_cap/ffmpeg_patch/
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Bratislava
 
 # Install dependencies
 RUN mkdir -p /home/video_cap && \
@@ -11,13 +14,18 @@ RUN mkdir -p /home/video_cap && \
   chmod +x install.sh && \
   ./install.sh
 
+RUN mkdir -p /home/video_cap && \
+  cd /home/video_cap && \
+  chmod +x install.1.sh && \
+  ./install.1.sh
+
 # Install debugging tools
 RUN apt-get update && \
   apt-get -y install \
   gdb \
   python3-dbg
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 # install Python
 RUN apt-get update && \
@@ -39,6 +47,7 @@ RUN apt-get update && \
     libmp3lame-dev \
     zlib1g-dev \
     libx264-dev \
+    libx265-dev \
     libsdl2-dev \
     libvpx-dev \
     libvdpau-dev \
